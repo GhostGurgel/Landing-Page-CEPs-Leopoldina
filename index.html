@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Consulta CEP Leopoldina - Landing page canônica para busca interativa de logradouros e Códigos de Endereçamento Postal de Leopoldina, MG. Projeto acadêmico UEMG Carangola.">
+  <meta name="author" content="Sistemas de Informação - UEMG Carangola">
+  <meta name="theme-color" content="#0d47a1">
+  <title>Consulta CEP Leopoldina</title>
+  
+  <link rel="icon" type="image/png" href="./assets/logo-si.png">
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+
+  <!-- =========================================================
+       1. CABEÇALHO INSTITUCIONAL (HEADER)
+       ========================================================= -->
+  <header class="site-header" role="banner">
+    <div class="container header-container">
+      <div class="brand-group">
+        <a href="./index.html" class="brand-link" title="Consulta CEP Leopoldina">
+          <img src="./assets/logo-si.png" alt="Logotipo do Curso de Sistemas de Informação - UEMG Carangola" class="header-logo" width="48" height="48">
+          <div class="brand-text">
+            <span class="brand-title">Consulta CEP Leopoldina</span>
+            <span class="brand-subtitle">UEMG Carangola • Sistemas de Informação</span>
+          </div>
+        </a>
+      </div>
+      <div class="header-badges">
+        <span class="version-badge" title="Versão inicial do projeto">v0.1</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       2. SEÇÃO DE DESTAQUE (HERO)
+       ========================================================= -->
+  <section class="hero-section" aria-labelledby="hero-title">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+      <span class="hero-tag">Base Municipal de Endereçamento</span>
+      <h1 id="hero-title" class="hero-title">Encontre CEPs e Logradouros de Leopoldina - MG</h1>
+      <p class="hero-subtitle">
+        Consulte ruas, avenidas e praças de forma instantânea com busca reativa local e visualização completa de dados.
+      </p>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       3. ÁREA CENTRAL DE BUSCA E RESULTADOS (MAIN)
+       ========================================================= -->
+  <main class="main-content" id="conteudo-principal" role="main">
+    <div class="container">
+      
+      <!-- Caixa de Busca Interativa -->
+      <section class="search-card" aria-label="Mecanismo de Busca de Logradouros">
+        <label for="cep-search-input" class="search-label">
+          Digite o nome do logradouro (rua, avenida, praça):
+        </label>
+        
+        <form id="search-form" class="search-form" role="search" onsubmit="return false;">
+          <div class="search-input-wrapper">
+            <div class="search-field-box">
+              <span class="search-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </span>
+
+              <input 
+                type="text" 
+                id="cep-search-input" 
+                class="search-input" 
+                placeholder="Ex.: Rua Cotegipe, Barão de Ladário, Praça, CEP..." 
+                autocomplete="off"
+                spellcheck="false"
+                aria-autocomplete="list"
+                aria-controls="autocomplete-results"
+                aria-expanded="false"
+              >
+
+              <button type="button" id="clear-search-btn" class="clear-btn" aria-label="Limpar campo de busca" hidden>
+                &times;
+              </button>
+            </div>
+
+            <button type="submit" id="search-action-btn" class="search-action-btn" aria-label="Pesquisar logradouro">
+              Buscar
+            </button>
+
+            <!-- Menu Suspenso de Sugestões (Autocomplete) posicionado relativamente ao input -->
+            <ul id="autocomplete-results" class="autocomplete-list" role="listbox" aria-label="Sugestões de logradouros" hidden>
+              <!-- Preenchido dinamicamente via JavaScript -->
+            </ul>
+          </div>
+        </form>
+
+        <div class="search-helper" id="search-helper-text">
+          <span id="search-hint">* Digite pelo menos <strong>3 caracteres</strong> para listar sugestões.</span>
+          <span id="data-status-badge" class="data-status-badge">Carregando base de CEPs...</span>
+        </div>
+      </section>
+
+      <!-- Painel de Apresentação de Dados & Destaque ao CEP -->
+      <section id="result-container" class="result-section" aria-live="polite" hidden>
+        <div class="result-card">
+          <div class="result-header">
+            <span class="result-city-badge">Leopoldina • MG</span>
+            <span class="result-type" id="res-tipo-logradouro">Logradouro</span>
+          </div>
+
+          <!-- Destaque Absoluto do CEP -->
+          <div class="cep-highlight-box">
+            <span class="cep-highlight-label">Código de Endereçamento Postal</span>
+            <div class="cep-highlight-value-row">
+              <span class="cep-number" id="res-cep">36700-000</span>
+              <button type="button" id="copy-cep-btn" class="copy-btn" title="Copiar CEP para a área de transferência">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span id="copy-btn-text">Copiar CEP</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Grade de Informações Cadastrais Completas -->
+          <dl class="address-details-grid">
+            <div class="detail-item">
+              <dt>Logradouro</dt>
+              <dd id="res-logradouro">-</dd>
+            </div>
+            <div class="detail-item">
+              <dt>Bairro</dt>
+              <dd id="res-bairro">-</dd>
+            </div>
+            <div class="detail-item">
+              <dt>Localidade / UF</dt>
+              <dd id="res-localidade-uf">Leopoldina / MG</dd>
+            </div>
+            <div class="detail-item">
+              <dt>Complemento</dt>
+              <dd id="res-complemento">Não informado</dd>
+            </div>
+          </dl>
+
+          <div class="result-actions">
+            <button type="button" id="new-search-btn" class="secondary-btn">Nova Consulta</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feedback de Nenhum Resultado -->
+      <div id="no-results-msg" class="empty-state" hidden>
+        <div class="empty-state-icon">🔍</div>
+        <h3>Nenhum logradouro encontrado</h3>
+        <p>Verifique a ortografia ou tente buscar por outro nome de rua, avenida ou praça de Leopoldina.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- =========================================================
+       4. RODAPÉ INSTITUCIONAL (FOOTER)
+       ========================================================= -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-container">
+      
+      <div class="footer-logos">
+        <div class="footer-logo-item">
+          <img src="./assets/logo-si.png" alt="Sistemas de Informação - UEMG Carangola" class="footer-logo" width="46" height="46">
+          <span class="footer-logo-caption">Sistemas de Informação</span>
+        </div>
+        <div class="footer-logo-item">
+          <a href="https://uemg.br/carangola" target="_blank" rel="noopener noreferrer" title="Acessar portal oficial da UEMG Carangola (abre em nova guia)">
+            <img src="./assets/logo-uemg.png" alt="Portal Oficial da UEMG Unidade Carangola" class="footer-logo" width="46" height="46">
+          </a>
+          <span class="footer-logo-caption">UEMG Carangola</span>
+        </div>
+      </div>
+
+      <nav class="footer-links" aria-label="Links informativos e modais">
+        <button type="button" class="footer-link-btn" data-modal-target="modal-sobre">Sobre o Projeto</button>
+        <span class="footer-sep" aria-hidden="true">•</span>
+        <button type="button" class="footer-link-btn" data-modal-target="modal-termos">Termos de Uso</button>
+        <span class="footer-sep" aria-hidden="true">•</span>
+        <button type="button" class="footer-link-btn" data-modal-target="modal-privacidade">Política de Privacidade</button>
+      </nav>
+
+      <div class="footer-meta">
+        <p>Disciplina de <strong>Programação 2</strong> • 2º Período • Bacharelado em Sistemas de Informação</p>
+        <p class="footer-subtext">Desenvolvido com tecnologias Web Vanilla (HTML5, CSS3, JavaScript Puro). Dados locais obtidos via API pública ViaCEP.</p>
+        <p class="footer-copy">&copy; 2026 Consulta CEP Leopoldina. Todos os direitos acadêmicos reservados.</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- =========================================================
+       5. JANELAS FLUTUANTES (MODAIS ACESSÍVEIS)
+       ========================================================= -->
+
+  <!-- Modal 'Sobre' -->
+  <div id="modal-sobre" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-sobre-title" hidden>
+    <div class="modal-overlay" data-close-modal tabindex="-1"></div>
+    <div class="modal-dialog">
+      <header class="modal-header">
+        <h2 id="modal-sobre-title" class="modal-title">Sobre o Projeto</h2>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Fechar janela">&times;</button>
+      </header>
+      <div class="modal-body">
+        <section class="modal-section">
+          <h3>Identificação e Finalidade</h3>
+          <p>
+            Esta landing page foi desenvolvida como atividade prática da disciplina de 
+            <strong>Programação 2</strong> (Desenvolvimento Web) do curso de 
+            <strong>Bacharelado em Sistemas de Informação</strong> da 
+            <strong>Universidade do Estado de Minas Gerais (UEMG) — Unidade Acadêmica de Carangola</strong>, 
+            turma do 2º Período.
+          </p>
+          <p>
+            A finalidade pedagógica da aplicação consiste em consolidar os fundamentos da programação front-end essencial por meio da manipulação de dados locais em JSON via Fetch API, estruturação com HTML5 semântico, estilização com CSS3 moderno e interatividade com JavaScript Vanilla, sem a utilização de frameworks.
+          </p>
+        </section>
+
+        <section class="modal-section">
+          <h3>Equipe de Desenvolvimento</h3>
+          <ul class="team-list">
+            <li>
+              <strong>Gustavo</strong> 
+              <span class="team-role">— Aluno / Desenvolvedor Front-End</span>
+              <a href="#" target="_blank" rel="noopener noreferrer" class="member-link">[Portfólio / GitHub]</a>
+            </li>
+            <li>
+              <strong>Integrante 2</strong> 
+              <span class="team-role">— Aluno / Colaborador</span>
+              <a href="#" target="_blank" rel="noopener noreferrer" class="member-link">[Portfólio / GitHub]</a>
+            </li>
+            <li>
+              <strong>Integrante 3</strong> 
+              <span class="team-role">— Aluno / Colaborador</span>
+              <a href="#" target="_blank" rel="noopener noreferrer" class="member-link">[Portfólio / GitHub]</a>
+            </li>
+          </ul>
+        </section>
+
+        <section class="modal-section modal-highlight">
+          <h3>Nota de Transparência sobre o Uso de IA</h3>
+          <p>
+            Em consonância com os princípios de integridade acadêmica e transparência tecnológica, declara-se que ferramentas de Inteligência Artificial generativa foram utilizadas durante o desenvolvimento deste projeto.
+          </p>
+          <p>
+            <strong>Detalhamento:</strong> Foram aplicadas como suporte na depuração de expressões regulares do JavaScript, estruturação canônica do HTML5 semântico e na revisão sintática do CSS, sendo toda a arquitetura, lógica de negócios e validação final concebidas, auditadas e integradas pelos membros da equipe.
+          </p>
+        </section>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="primary-modal-btn" data-close-modal>Entendido</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Modal 'Termos de Uso' -->
+  <div id="modal-termos" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-termos-title" hidden>
+    <div class="modal-overlay" data-close-modal tabindex="-1"></div>
+    <div class="modal-dialog">
+      <header class="modal-header">
+        <h2 id="modal-termos-title" class="modal-title">Termos de Uso</h2>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Fechar janela">&times;</button>
+      </header>
+      <div class="modal-body">
+        <ol class="legal-list">
+          <li>
+            <strong>Finalidade Acadêmica:</strong> 
+            Esta aplicação web possui finalidade exclusivamente didática e pedagógica, vinculada às atividades formativas da UEMG Unidade Carangola.
+          </li>
+          <li>
+            <strong>Natureza dos Dados:</strong> 
+            As informações de logradouros e Códigos de Endereçamento Postal (CEP) foram extraídas de bases públicas (ViaCEP) e são apresentadas em caráter meramente informativo, sem garantias de atualização cadastral em tempo real.
+          </li>
+          <li>
+            <strong>Isenção de Responsabilidade:</strong> 
+            Os autores e a instituição não se responsabilizam por eventuais divergências cadastrais perante a Empresa Brasileira de Correios e Telégrafos ou por utilizações comerciais indevidas desta plataforma.
+          </li>
+        </ol>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="primary-modal-btn" data-close-modal>Fechar</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Modal 'Política de Privacidade' -->
+  <div id="modal-privacidade" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-privacidade-title" hidden>
+    <div class="modal-overlay" data-close-modal tabindex="-1"></div>
+    <div class="modal-dialog">
+      <header class="modal-header">
+        <h2 id="modal-privacidade-title" class="modal-title">Política de Privacidade</h2>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Fechar janela">&times;</button>
+      </header>
+      <div class="modal-body">
+        <ol class="legal-list">
+          <li>
+            <strong>Não Coleta de Dados Pessoais:</strong> 
+            Esta landing page não coleta, não solicita, não processa e não armazena quaisquer dados de identificação pessoal, cookies de rastreamento ou dados sensíveis dos visitantes.
+          </li>
+          <li>
+            <strong>Execução Local:</strong> 
+            As consultas aos logradouros e CEPs são filtradas localmente na memória do navegador do usuário a partir de um arquivo estático (JSON), inexistindo comunicação de telemetria com servidores de rastreamento externos.
+          </li>
+          <li>
+            <strong>Conformidade:</strong> 
+            Esta aplicação segue os princípios fundamentais da Lei Geral de Proteção de Dados Pessoais (LGPD - Lei Federal nº 13.709/2018), pautando-se na minimização absoluta de dados e na transparência.
+          </li>
+        </ol>
+      </div>
+      <footer class="modal-footer">
+        <button type="button" class="primary-modal-btn" data-close-modal>Concordo e Fechar</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Toast de notificação de cópia -->
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden>
+    CEP copiado com sucesso!
+  </div>
+
+  <!-- Script com dados de contingência para execução offline / protocolo file:// -->
+  <script src="./data/ceps-data.js"></script>
+  <!-- Script principal da aplicação -->
+  <script src="./js/app.js"></script>
+</body>
+</html>
+

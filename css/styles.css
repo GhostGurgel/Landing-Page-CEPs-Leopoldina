@@ -1,0 +1,980 @@
+/* ==========================================================================
+   CONSULTA CEP LEOPOLDINA - VERSÃO 0.1
+   Vanilla CSS3 - Responsivo Mobile-First & Acessibilidade Visual
+   Disciplina: Programação 2 - Sistemas de Informação (UEMG Carangola)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. VARIÁVEIS DE ESTILO (DESIGN TOKENS)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Paleta Institucional e Primária */
+  --primary-color: #0b4f8a;
+  --primary-dark: #07345c;
+  --primary-light: #1877c9;
+  --primary-subtle: #e8f2fc;
+  
+  /* Cores de Destaque para o CEP */
+  --cep-highlight-bg: #092c4c;
+  --cep-highlight-text: #ffd166;
+  --cep-highlight-border: #fca311;
+  --cep-badge-bg: #ffeedb;
+  --cep-badge-text: #994700;
+
+  /* Cores Semânticas */
+  --success-color: #0d824d;
+  --warning-color: #b7791f;
+  --danger-color: #c53030;
+
+  /* Escala de Neutros */
+  --bg-body: #f4f7fa;
+  --bg-surface: #ffffff;
+  --bg-surface-alt: #f8fafc;
+  --text-main: #1a202c;
+  --text-muted: #4a5568;
+  --text-light: #718096;
+  --border-color: #e2e8f0;
+  --border-focus: #1877c9;
+
+  /* Tipografia */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --line-height-base: 1.6;
+
+  /* Espaçamentos e Raios */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
+  --shadow-cep: 0 8px 24px rgba(9, 44, 76, 0.25);
+
+  --transition-fast: 0.18s ease;
+  --transition-normal: 0.28s ease;
+}
+
+/* --------------------------------------------------------------------------
+   2. RESET E ESTILOS GLOBAIS
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: var(--line-height-base);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button, input {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.container {
+  width: 100%;
+  max-width: 1040px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. CABEÇALHO (HEADER)
+   -------------------------------------------------------------------------- */
+.site-header {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.header-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--primary-color);
+  letter-spacing: -0.01em;
+}
+
+.brand-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.version-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background-color: var(--primary-subtle);
+  color: var(--primary-color);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(11, 79, 138, 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   4. SEÇÃO DE DESTAQUE (HERO)
+   -------------------------------------------------------------------------- */
+.hero-section {
+  position: relative;
+  background: linear-gradient(135deg, #072a4d 0%, #0d4b82 60%, #1565c0 100%);
+  color: #ffffff;
+  padding: 3.5rem 1.25rem 4rem;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Máscara e overlay para contraste garantido com textos */
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.35) 100%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 780px;
+}
+
+.hero-tag {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 1.2rem;
+}
+
+.hero-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.55;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   5. ÁREA PRINCIPAL E BUSCA (MAIN)
+   -------------------------------------------------------------------------- */
+.main-content {
+  flex: 1;
+  padding: 2rem 0 3.5rem;
+  margin-top: -1.8rem; /* eleva o card de busca sobre a hero section */
+  position: relative;
+  z-index: 10;
+}
+
+.search-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 1.5rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  position: relative;
+}
+
+.search-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  margin-bottom: 0.65rem;
+}
+
+.search-form {
+  width: 100%;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.search-field-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.95rem 2.85rem 0.95rem 2.85rem;
+  font-size: 1.05rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-surface-alt);
+  color: var(--text-main);
+  transition: all var(--transition-fast);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(24, 119, 201, 0.15);
+}
+
+.clear-btn {
+  position: absolute;
+  right: 0.85rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+  z-index: 2;
+}
+
+.clear-btn:hover {
+  color: var(--text-main);
+}
+
+.search-action-btn {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  padding: 0.85rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-action-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+.search-helper {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.data-status-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.75rem;
+  background-color: #edf2f7;
+  color: var(--text-muted);
+}
+
+.data-status-badge.loaded {
+  background-color: #e6fffa;
+  color: #234e52;
+}
+
+/* Menu Suspenso de Sugestões (Dropdown / Autocomplete) */
+.autocomplete-list {
+  list-style: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 100;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-surface);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.autocomplete-item {
+  padding: 0.85rem 1.15rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  transition: background-color var(--transition-fast);
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+  background-color: var(--primary-subtle);
+}
+
+.autocomplete-main-text {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.autocomplete-main-text mark {
+  background-color: #fff3b0;
+  color: #0b4f8a;
+  font-weight: 700;
+  padding: 0 0.15rem;
+  border-radius: 2px;
+}
+
+.autocomplete-sub-text {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.autocomplete-cep-badge {
+  font-family: monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background-color: #e2e8f0;
+  color: #2d3748;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   6. PAINEL DE APRESENTAÇÃO DE DADOS & DESTAQUE DO CEP
+   -------------------------------------------------------------------------- */
+.result-section {
+  margin-top: 2rem;
+}
+
+.result-card {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.result-city-badge {
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: var(--primary-subtle);
+  color: var(--primary-color);
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+}
+
+.result-type {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* BLOCO DE DESTAQUE ABSOLUTO DO CEP */
+.cep-highlight-box {
+  background: linear-gradient(135deg, var(--cep-highlight-bg) 0%, #103b63 100%);
+  color: #ffffff;
+  padding: 1.5rem 1.25rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-cep);
+  border-left: 6px solid var(--cep-highlight-border);
+  margin-bottom: 1.5rem;
+}
+
+.cep-highlight-label {
+  display: block;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #cbd5e0;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.cep-highlight-value-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.cep-number {
+  font-family: monospace;
+  font-size: 2.35rem;
+  font-weight: 800;
+  color: var(--cep-highlight-text);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  align-self: flex-start;
+  background-color: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  padding: 0.5rem 0.95rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.copy-btn:hover {
+  background-color: rgba(255, 255, 255, 0.28);
+  border-color: #ffffff;
+}
+
+.copy-btn:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* Grade de Detalhes Cadastrais */
+.address-details-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  background-color: var(--bg-surface-alt);
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+}
+
+.detail-item dt {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-light);
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.detail-item dd {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.result-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.secondary-btn {
+  background-color: #edf2f7;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.secondary-btn:hover {
+  background-color: #e2e8f0;
+}
+
+/* Estado de busca sem resultados */
+.empty-state {
+  margin-top: 2rem;
+  background-color: var(--bg-surface);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+}
+
+.empty-state-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.empty-state h3 {
+  font-size: 1.2rem;
+  color: var(--text-main);
+  margin-bottom: 0.4rem;
+}
+
+.empty-state p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --------------------------------------------------------------------------
+   7. RODAPÉ (FOOTER)
+   -------------------------------------------------------------------------- */
+.site-footer {
+  background-color: #0b1f33;
+  color: #cbd5e0;
+  border-top: 4px solid var(--primary-color);
+  padding: 3rem 1.25rem 2.25rem;
+  margin-top: auto;
+}
+
+.footer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.75rem;
+}
+
+.footer-logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.footer-logo-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.footer-logo {
+  height: 48px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  background-color: #ffffff;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: transform var(--transition-fast);
+}
+
+.footer-logo:hover {
+  transform: scale(1.04);
+}
+
+.footer-logo-caption {
+  font-size: 0.75rem;
+  color: #a0aec0;
+  font-weight: 600;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.footer-link-btn {
+  background: none;
+  border: none;
+  color: #90cdf4;
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color var(--transition-fast);
+}
+
+.footer-link-btn:hover {
+  color: #ffffff;
+}
+
+.footer-sep {
+  color: #4a5568;
+}
+
+.footer-meta {
+  font-size: 0.82rem;
+  color: #a0aec0;
+  line-height: 1.6;
+  max-width: 680px;
+}
+
+.footer-subtext {
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  color: #718096;
+}
+
+.footer-copy {
+  margin-top: 0.75rem;
+  font-size: 0.74rem;
+  color: #718096;
+}
+
+/* --------------------------------------------------------------------------
+   8. MODAIS ACESSÍVEIS (FLUTUANTES)
+   -------------------------------------------------------------------------- */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(5, 15, 25, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.modal-dialog {
+  position: relative;
+  z-index: 1001;
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  max-width: 640px;
+  width: 100%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  animation: modalFadeIn 0.22s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.modal-close-btn:hover {
+  color: var(--text-main);
+}
+
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.modal-section h3 {
+  font-size: 1.05rem;
+  color: var(--primary-dark);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.modal-highlight {
+  background-color: var(--primary-subtle);
+  border-left: 4px solid var(--primary-color);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+}
+
+.team-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.team-list li {
+  padding-left: 0.5rem;
+  border-left: 3px solid var(--border-color);
+}
+
+.team-role {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin-left: 0.3rem;
+}
+
+.member-link {
+  color: var(--primary-light);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  margin-left: 0.4rem;
+}
+
+.legal-list {
+  padding-left: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.legal-list li {
+  line-height: 1.55;
+}
+
+.legal-list strong {
+  color: var(--primary-dark);
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.primary-modal-btn {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.35rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.primary-modal-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+/* --------------------------------------------------------------------------
+   9. TOAST DE FEEDBACK
+   -------------------------------------------------------------------------- */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background-color: #1a202c;
+  color: #ffffff;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-lg);
+  z-index: 2000;
+  animation: toastIn 0.25s ease-out;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   10. RESPONSIVIDADE (MEDIA QUERIES)
+   -------------------------------------------------------------------------- */
+@media (min-width: 600px) {
+  .hero-title {
+    font-size: 2.3rem;
+  }
+
+  .search-card {
+    padding: 2.25rem 2rem;
+  }
+
+  .search-input-wrapper {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .search-action-btn {
+    align-self: stretch;
+  }
+
+  .search-helper {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .data-status-badge {
+    align-self: auto;
+  }
+
+  .cep-highlight-value-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .address-details-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .hero-section {
+    padding: 4.5rem 1.25rem 5rem;
+  }
+
+  .hero-title {
+    font-size: 2.65rem;
+  }
+
+  .main-content {
+    margin-top: -2.5rem;
+  }
+
+  .address-details-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
